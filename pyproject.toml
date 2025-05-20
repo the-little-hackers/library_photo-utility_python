@@ -8,17 +8,18 @@ classifiers = [
     "Topic :: Software Development :: Libraries",
 ]
 description = "Python utility library for processing photo files"
-keywords = ["exfi", "library", "photo", "utils"]
+keywords = ["exif", "library", "photo", "utils"]
 license = "MIT License"
 name = "thelittlehackers-photo-utility"
 packages = [{include = "thelittlehackers", from = "src"}]
 readme = "README.md"
 repository = "https://github.com/the-little-hackers/library_photo-utility_python"
-version = "0.0.1"
+version = "0.0.2"
 
 [tool.poetry.dependencies]
-python = "^3.12"
 exifread = "^3.0.0"
+pillow = "^11.2.1"
+python = "^3.12"
 
 [tool.poetry.group.dev.dependencies]
 black = "^24.8.0"

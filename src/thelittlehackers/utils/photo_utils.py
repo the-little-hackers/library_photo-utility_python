@@ -29,13 +29,45 @@ from pathlib import Path
 from typing import Any
 
 import exifread
+from PIL import Image
 
-EXIF_TAG_EXPOSURE_TIME = 0x829A
-EXIF_TAG_F_NUMBER = 0x829D
-EXIF_TAG_FOCAL_LENGTH = 0x920A
-EXIF_TAG_ISO_SPEED_RATINGS = 0x8827
-EXIF_TAG_ORIENTATION = 0x0112
+# EXIF_TAG_EXPOSURE_TIME = 0x829A
+# EXIF_TAG_F_NUMBER = 0x829D
+# EXIF_TAG_FOCAL_LENGTH = 0x920A
+# EXIF_TAG_ISO_SPEED_RATINGS = 0x8827
+# EXIF_TAG_ORIENTATION = 0x0112
 
+# Exif tag which value corresponds to the orientation, which indicates
+# the orientation of the camera relative to the captured scene.
+EXIF_TAG_ORIENTATION = 'Image Orientation'
+
+# Exif orientation tag values as defined by the TIFF/Exif specification.
+# These values describe how the image should be rotated or flipped to be
+# displayed correctly.  They range from normal orientation (1) to
+# combinations of horizontal flips and 90/180/270-degree rotations (2–8).
+EXIF_TAG_ORIENTATION_ROTATION_0 = 1
+EXIF_TAG_ORIENTATION_ROTATION_90 = 8
+EXIF_TAG_ORIENTATION_ROTATION_180 = 3
+EXIF_TAG_ORIENTATION_ROTATION_270 = 6
+EXIF_TAG_ORIENTATION_FLIP_LEFT_RIGHT_ROTATION_0 = 2
+EXIF_TAG_ORIENTATION_FLIP_LEFT_RIGHT_ROTATION_90 = 7
+EXIF_TAG_ORIENTATION_FLIP_LEFT_RIGHT_ROTATION_180 = 4
+EXIF_TAG_ORIENTATION_FLIP_LEFT_RIGHT_ROTATION_270 = 5
+
+# Mapping of Exif orientation tag values to corresponding Pillow
+# transposition operations.  Each list defines the sequence of
+# transformations (rotations and/or flips) required to display the
+# image correctly according to its orientation metadata.
+EXIF_PIL_TRANSPOSITIONS = {
+    EXIF_TAG_ORIENTATION_ROTATION_0: [],
+    EXIF_TAG_ORIENTATION_ROTATION_90: [Image.Transpose.ROTATE_90],
+    EXIF_TAG_ORIENTATION_ROTATION_180: [Image.Transpose.ROTATE_180],
+    EXIF_TAG_ORIENTATION_ROTATION_270: [Image.Transpose.ROTATE_270],
+    EXIF_TAG_ORIENTATION_FLIP_LEFT_RIGHT_ROTATION_0: [Image.Transpose.FLIP_LEFT_RIGHT],
+    EXIF_TAG_ORIENTATION_FLIP_LEFT_RIGHT_ROTATION_90: [Image.Transpose.FLIP_LEFT_RIGHT, Image.Transpose.ROTATE_90],
+    EXIF_TAG_ORIENTATION_FLIP_LEFT_RIGHT_ROTATION_180: [Image.Transpose.FLIP_TOP_BOTTOM],
+    EXIF_TAG_ORIENTATION_FLIP_LEFT_RIGHT_ROTATION_270: [Image.Transpose.FLIP_LEFT_RIGHT, Image.Transpose.ROTATE_270],
+}
 
 # def __search_exif_tag_value(
 #         exif_tags,
@@ -233,3 +265,45 @@ def get_photo_capture_time(
 #         bearing=bearing,
 #         fix_time=fix_time
 #     )
+
+
+def open_image_with_corrected_orientation(file_path: Path) -> Image:
+    """
+    Load an image from a file and apply the necessary transformations to
+    correct its orientation based on Exif metadata.
+
+    This function reads the Exif orientation tag, which indicates how the
+    digital device was positioned when capturing the image.  If an
+    orientation tag is present, the function applies the corresponding
+    transposition to ensure the image is displayed correctly.
+
+
+    :param file_path: The file path of the image.
+
+
+    :return: A `PIL.Image` object with corrected orientation, if necessary.
+    """
+    image = Image.open(file_path.expanduser().resolve())
+
+    # Process the Exif chunk of the image.
+    with open(file_path, 'rb') as fd:
+        exif_tags = exifread.process_file(fd)
+
+    # Apply the transposition corresponding to the Exif values of the
+    # orientation tag of this image.
+    try:
+        exif_tag_orientation = exif_tags.get(EXIF_TAG_ORIENTATION)
+        if exif_tag_orientation and exif_tag_orientation.values:
+            transpositions = [
+                transposition
+                for value in exif_tag_orientation.values
+                for transposition in EXIF_PIL_TRANSPOSITIONS[value]
+            ]
+
+            for transposition in transpositions:
+                image = image.transpose(transposition)
+
+    except KeyError:  # The picture may have a wrong Exif tag.
+        pass
+
+    return image

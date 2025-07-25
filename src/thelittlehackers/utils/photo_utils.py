@@ -90,6 +90,49 @@ EXIF_PIL_TRANSPOSITIONS = {
 #     return default_value
 
 
+def __correct_photo_orientation(
+        image: Image,
+        exif_tags:  dict[str, Any]
+) -> Image:
+    """
+    Correct the orientation of an image based on its Exif orientation tag.
+
+    This function reads the Exif orientation metadata from the provided
+    ``exif_tags`` dictionary and applies the corresponding transpositions
+    (rotations and/or flips) to the given image. This ensures the image is
+    displayed with the correct orientation.
+
+    If the orientation tag is missing or invalid, the function returns the
+    original image without raising an error.
+
+
+    :param image: The PIL image to be reoriented.
+
+    :param exif_tags: A dictionary of Exif tags extracted from the image
+        metadata.
+
+    :return: The reoriented image.
+    """
+    # Apply the transposition corresponding to the Exif values of the
+    # orientation tag of this image.
+    try:
+        exif_tag_orientation = exif_tags.get(EXIF_TAG_ORIENTATION)
+        if exif_tag_orientation and exif_tag_orientation.values:
+            transpositions = [
+                transposition
+                for value in exif_tag_orientation.values
+                for transposition in EXIF_PIL_TRANSPOSITIONS[value]
+            ]
+
+            for transposition in transpositions:
+                image = image.transpose(transposition)
+
+    except KeyError:  # The picture may have a wrong Exif tag.
+        pass
+
+    return image
+
+
 def __extract_exif_tags(file: BytesIO | Path) -> dict[str, Any]:
     """
     Extract Exif metadata tags from an image file.
@@ -267,7 +310,7 @@ def get_photo_capture_time(
 #     )
 
 
-def open_image_with_corrected_orientation(file_path: Path) -> Image:
+def load_image_from_file_with_corrected_orientation(file_path: Path) -> Image:
     """
     Load an image from a file and apply the necessary transformations to
     correct its orientation based on Exif metadata.
@@ -291,27 +334,13 @@ def open_image_with_corrected_orientation(file_path: Path) -> Image:
 
     # Apply the transposition corresponding to the Exif values of the
     # orientation tag of this image.
-    try:
-        exif_tag_orientation = exif_tags.get(EXIF_TAG_ORIENTATION)
-        if exif_tag_orientation and exif_tag_orientation.values:
-            transpositions = [
-                transposition
-                for value in exif_tag_orientation.values
-                for transposition in EXIF_PIL_TRANSPOSITIONS[value]
-            ]
-
-            for transposition in transpositions:
-                image = image.transpose(transposition)
-
-    except KeyError:  # The picture may have a wrong Exif tag.
-        pass
-
+    image = __correct_photo_orientation(image, exif_tags)
     return image
 
 
 def load_image_from_memory_with_corrected_orientation(file_in_memory: BytesIO) -> Image:
     """
-    Load an image from a file and apply the necessary transformations to
+    Load an image from memory and apply the necessary transformations to
     correct its orientation based on Exif metadata.
 
     This function reads the Exif orientation tag, which indicates how the
@@ -320,7 +349,7 @@ def load_image_from_memory_with_corrected_orientation(file_in_memory: BytesIO) -
     transposition to ensure the image is displayed correctly.
 
 
-    :param file_in_memory: The file of the image.
+    :param file_in_memory: The file in memory.
 
 
     :return: A `PIL.Image` object with corrected orientation, if necessary.
@@ -333,19 +362,5 @@ def load_image_from_memory_with_corrected_orientation(file_in_memory: BytesIO) -
 
     # Apply the transposition corresponding to the Exif values of the
     # orientation tag of this image.
-    try:
-        exif_tag_orientation = exif_tags.get(EXIF_TAG_ORIENTATION)
-        if exif_tag_orientation and exif_tag_orientation.values:
-            transpositions = [
-                transposition
-                for value in exif_tag_orientation.values
-                for transposition in EXIF_PIL_TRANSPOSITIONS[value]
-            ]
-
-            for transposition in transpositions:
-                image = image.transpose(transposition)
-
-    except KeyError:  # The picture may have a wrong Exif tag.
-        pass
-
+    image = __correct_photo_orientation(image, exif_tags)
     return image

@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.3] - 2025-06-25
+### Added
+- Add function `load_image_from_memory_with_corrected_orientation`
+### Changed
+- Rename function `open_image_with_corrected_orientation` with `load_image_from_file_with_corrected_orientation` 
+
 ## [0.0.2] - 2025-05-20
 ### Added
 - Add function `open_image_with_corrected_orientation`

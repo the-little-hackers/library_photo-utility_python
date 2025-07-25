@@ -307,3 +307,45 @@ def open_image_with_corrected_orientation(file_path: Path) -> Image:
         pass
 
     return image
+
+
+def load_image_from_memory_with_corrected_orientation(file_in_memory: BytesIO) -> Image:
+    """
+    Load an image from a file and apply the necessary transformations to
+    correct its orientation based on Exif metadata.
+
+    This function reads the Exif orientation tag, which indicates how the
+    digital device was positioned when capturing the image.  If an
+    orientation tag is present, the function applies the corresponding
+    transposition to ensure the image is displayed correctly.
+
+
+    :param file_in_memory: The file of the image.
+
+
+    :return: A `PIL.Image` object with corrected orientation, if necessary.
+    """
+    image = Image.open(file_in_memory)
+
+    # Process the Exif chunk of the image.
+    file_in_memory.seek(0)
+    exif_tags = exifread.process_file(file_in_memory)
+
+    # Apply the transposition corresponding to the Exif values of the
+    # orientation tag of this image.
+    try:
+        exif_tag_orientation = exif_tags.get(EXIF_TAG_ORIENTATION)
+        if exif_tag_orientation and exif_tag_orientation.values:
+            transpositions = [
+                transposition
+                for value in exif_tag_orientation.values
+                for transposition in EXIF_PIL_TRANSPOSITIONS[value]
+            ]
+
+            for transposition in transpositions:
+                image = image.transpose(transposition)
+
+    except KeyError:  # The picture may have a wrong Exif tag.
+        pass
+
+    return image

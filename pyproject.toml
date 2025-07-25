@@ -37,7 +37,7 @@ name = "thelittlehackers-photo-utility"
 packages = [{include = "thelittlehackers", from = "src"}]
 readme = "README.md"
 repository = "https://github.com/the-little-hackers/library_photo-utility_python"
-version = "0.0.2"
+version = "0.0.3"
 
 [tool.poetry.dependencies]
 exifread = "^3.0.0"

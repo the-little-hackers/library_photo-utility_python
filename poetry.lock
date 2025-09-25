@@ -46,13 +46,13 @@ uvloop = ["uvloop (>=0.15.2)"]
 
 [[package]]
 name = "click"
-version = "8.2.1"
+version = "8.3.0"
 description = "Composable command line interface toolkit"
 optional = false
 python-versions = ">=3.10"
 files = [
-    {file = "click-8.2.1-py3-none-any.whl", hash = "sha256:61a3265b914e850b85317d0b3109c7f8cd35a670f963866005d6ef1d5175a12b"},
-    {file = "click-8.2.1.tar.gz", hash = "sha256:27c491cc05d968d271d5a1db13e3b5a184636d9d930f148c50b038f0d0646202"},
+    {file = "click-8.3.0-py3-none-any.whl", hash = "sha256:9b9f285302c6e3064f4330c05f05b81945b2a39544279343e6e7c5f27a9baddc"},
+    {file = "click-8.3.0.tar.gz", hash = "sha256:e7b8232224eba16f4ebe410c25ced9f7875cb5f3263ffc93cc3e8da705e229c4"},
 ]
 
 [package.dependencies]
@@ -71,17 +71,17 @@ files = [
 
 [[package]]
 name = "exifread"
-version = "3.3.2"
+version = "3.5.1"
 description = "Library to extract Exif information from digital camera image files."
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "exifread-3.3.2-py3-none-any.whl", hash = "sha256:f927cf4522827cc3ecfade8d0da37bbd5421f636eda7e650b61e9ce4c9a451fe"},
-    {file = "exifread-3.3.2.tar.gz", hash = "sha256:45c6a6564dd52e63a5d93c5e216fd65c38513b450167bee6d73183415db71358"},
+    {file = "exifread-3.5.1-py3-none-any.whl", hash = "sha256:e5426ce2857423ad401e575ea9d159dc97449dc041fb6e61b35109caea72c311"},
+    {file = "exifread-3.5.1.tar.gz", hash = "sha256:9f998f80d3062741c976dfc4fd033424bc40932937994e4d2181eb70c4b6aedd"},
 ]
 
 [package.extras]
-dev = ["build (>=1.0,<2.0)", "pre-commit (>=2.21,<3.0)", "pylint (>=3.0,<4.0)"]
+dev = ["build (>=1.0,<2.0)", "pre-commit (>=2.21,<3.0)", "pylint (>=3.1,<4.0)"]
 test = ["pytest (>=7.4,<8.0)"]
 
 [[package]]
@@ -270,13 +270,13 @@ xmp = ["defusedxml"]
 
 [[package]]
 name = "platformdirs"
-version = "4.3.8"
+version = "4.4.0"
 description = "A small Python package for determining appropriate platform-specific dirs, e.g. a `user data dir`."
 optional = false
 python-versions = ">=3.9"
 files = [
-    {file = "platformdirs-4.3.8-py3-none-any.whl", hash = "sha256:ff7059bb7eb1179e2685604f4aaf157cfd9535242bd23742eadc3c13542139b4"},
-    {file = "platformdirs-4.3.8.tar.gz", hash = "sha256:3d512d96e16bcb959a814c9f348431070822a6496326a4be0911c40b5a74c2bc"},
+    {file = "platformdirs-4.4.0-py3-none-any.whl", hash = "sha256:abd01743f24e5287cd7a5db3752faf1a2d65353f38ec26d98e25a6db65958c85"},
+    {file = "platformdirs-4.4.0.tar.gz", hash = "sha256:ca753cf4d81dc309bc67b0ea38fd15dc97bc30ce419a7f58d13eb3bf14c4febf"},
 ]
 
 [package.extras]

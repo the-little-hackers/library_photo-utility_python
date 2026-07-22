@@ -40,12 +40,12 @@ repository = "https://github.com/the-little-hackers/library_photo-utility_python
 version = "0.0.3"
 
 [tool.poetry.dependencies]
-exifread = "^3.0.0"
-pillow = ">=12.2.0"
+exifread = "^3.5.1"
+pillow = ">=12.3.0"
 python = ">=3.12,<4.0"
 
 [tool.poetry.group.dev.dependencies]
-black = "^26.3.1"
+black = "^26.5.1"
 flake8 = "^7.3.0"
 
 [build-system]
